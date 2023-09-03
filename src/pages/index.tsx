@@ -1,11 +1,13 @@
 
 import React, { useEffect, useRef, useState } from 'react'
 import useEnterKey from '@/hooks/useEnterKey'
+import {Button} from '@/components/button'
 interface Row {
   word: string
   pronunciation: string 
   explaination: string
 }
+
 export default function Home() {
         
      const tableRef = useRef<HTMLTableElement>(null)
@@ -24,26 +26,31 @@ export default function Home() {
             setWordTable(() => [{word:"", pronunciation:"", explaination:""}])
           }
      }, [])
+     const courseInputRef = useRef<HTMLInputElement>(null)
   return (<>
     <div className="options">
-        <button id="import">导入到Anki</button>
+      <label htmlFor="course">course name</label>
+      <input type="text" className='border-b border-slate-500 border-1 outline-none' name='course' ref={courseInputRef}/>
+
+      <Button>保存到数据库</Button>
+        <Button>导出为CSV</Button>
         <input type="checkbox" name="skip" />
         <label htmlFor="skip">若已经添加则跳过</label>
     </div>
-    <table ref={tableRef}>
+    <table className='w-1/2' ref={tableRef}>
         <thead>
             <tr>
-                <th>单 词</th>
-                <th>读 音</th>
-                <th>解 释</th>
+                <th className='border border-slate-900 w-1/3'>单 词</th>
+                <th className='border border-slate-900 w-1/3'>读 音</th>
+                <th className='border border-slate-900 w-1/3'>解 释</th>
             </tr>
         </thead>
         <tbody>
           {wordTable.map(({word, pronunciation,explaination}, index) => (
             <tr key={index}>
-                <td className="word" contentEditable suppressContentEditableWarning >{word}</td>
-                <td className="pronunciation" contentEditable suppressContentEditableWarning>{pronunciation}</td>
-                <td className="explaination" contentEditable suppressContentEditableWarning>{explaination}</td>
+                <td className="border border-slate-900 word" contentEditable suppressContentEditableWarning >{word}</td>
+                <td className="border border-slate-900 pronunciation" contentEditable suppressContentEditableWarning>{pronunciation}</td>
+                <td className="border border-slate-900 explaination" contentEditable suppressContentEditableWarning>{explaination}</td>
             </tr>
           ))}
             
