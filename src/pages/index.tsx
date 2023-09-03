@@ -3,6 +3,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import useEnterKey from '@/hooks/useEnterKey'
 import {Button} from '@/components/button'
 import { trpc } from '@/utils/trpc-provider'
+import saveCSV from '@/utils/gen-csv'
 interface Row {
   word: string
   pronunciation: string 
@@ -36,13 +37,21 @@ export default function Home() {
       alert("Woops...")
     }
   }
+  const onClickGen = () => {
+    saveCSV(
+      courseInputRef.current?.value ?? new Date().toString(), 
+      ["front", "back"], 
+      wordTable.filter(item => !!item.word).map(item => [item.word, `${item.pronunciation} ${item.explaination}`])
+    )
+    
+  }
   return (<>
     <div className="options">
       <label htmlFor="course">course name</label>
       <input type="text" className='border-b border-slate-500 border-1 outline-none' name='course' ref={courseInputRef}/>
 
       <Button onClick={onClickSave}>保存到数据库</Button>
-        <Button>导出为CSV</Button>
+        <Button onClick={onClickGen}>导出为CSV</Button>
         <input type="checkbox" name="skip" />
         <label htmlFor="skip">若已经添加则跳过</label>
     </div>
