@@ -1,7 +1,6 @@
-'use client'
-import Image from 'next/image'
+
 import React, { useEffect, useRef, useState } from 'react'
-import useEnterKey from './hooks/useEnterKey'
+import useEnterKey from '@/hooks/useEnterKey'
 interface Row {
   word: string
   pronunciation: string 
