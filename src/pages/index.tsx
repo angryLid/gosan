@@ -2,6 +2,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import useEnterKey from '@/hooks/useEnterKey'
 import {Button} from '@/components/button'
+import { trpc } from '@/utils/trpc-provider'
 interface Row {
   word: string
   pronunciation: string 
@@ -27,12 +28,20 @@ export default function Home() {
           }
      }, [])
      const courseInputRef = useRef<HTMLInputElement>(null)
+    const {mutate} =  trpc.vocabulary.save.useMutation()
+  const onClickSave = () => {
+    try {
+      mutate({courseName: courseInputRef.current?.value ?? new Date().toString(),list: wordTable})
+    }catch {
+      alert("Woops...")
+    }
+  }
   return (<>
     <div className="options">
       <label htmlFor="course">course name</label>
       <input type="text" className='border-b border-slate-500 border-1 outline-none' name='course' ref={courseInputRef}/>
 
-      <Button>保存到数据库</Button>
+      <Button onClick={onClickSave}>保存到数据库</Button>
         <Button>导出为CSV</Button>
         <input type="checkbox" name="skip" />
         <label htmlFor="skip">若已经添加则跳过</label>

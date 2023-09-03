@@ -11,8 +11,16 @@ datasource db {
 }
 
 model Vocabulary {
-  id Int @id @default(autoincrement())
-  word String
-  explaination String
+  id            Int    @id @default(autoincrement())
+  word          String
+  explaination  String
   pronunciation String
+  origin        Course @relation(fields: [courseId], references: [id])
+  courseId      Int
+}
+
+model Course {
+  id         Int          @id @default(autoincrement())
+  name       String
+  Vocabulary Vocabulary[]
 }
