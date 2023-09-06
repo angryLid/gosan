@@ -13,9 +13,9 @@ interface Row {
 export default function Home() {
         
      const tableRef = useRef<HTMLTableElement>(null)
-     useEnterKey(tableRef)
+     
 
-    const [wordTable, setWordTable] = useState<Row[]>([])
+    const {wordTable, setWordTable} = useEnterKey(tableRef)
    useEffect(() => {
           try {
               const data = localStorage.getItem("table")
@@ -27,7 +27,7 @@ export default function Home() {
           }catch {
             setWordTable(() => [{word:"", pronunciation:"", explaination:""}])
           }
-     }, [])
+     }, [setWordTable])
      const courseInputRef = useRef<HTMLInputElement>(null)
     const {mutate} =  trpc.vocabulary.save.useMutation()
   const onClickSave = () => {
@@ -66,9 +66,9 @@ export default function Home() {
         <tbody>
           {wordTable.map(({word, pronunciation,explaination}, index) => (
             <tr key={index}>
-                <td className="border border-slate-900 word" contentEditable suppressContentEditableWarning >{word}</td>
-                <td className="border border-slate-900 pronunciation" contentEditable suppressContentEditableWarning>{pronunciation}</td>
-                <td className="border border-slate-900 explaination" contentEditable suppressContentEditableWarning>{explaination}</td>
+                <td data-target="1" className="border border-slate-900 word" contentEditable suppressContentEditableWarning >{word}</td>
+                <td data-target="2" className="border border-slate-900 pronunciation" contentEditable suppressContentEditableWarning>{pronunciation}</td>
+                <td data-target="3" className="border border-slate-900 explaination" contentEditable suppressContentEditableWarning>{explaination}</td>
             </tr>
           ))}
             
