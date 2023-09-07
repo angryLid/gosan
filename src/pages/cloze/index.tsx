@@ -1,19 +1,22 @@
 import { Button } from "@/components/button"
 import useRecovery from "@/hooks/useRecovery"
 import { FormEvent, useRef, useState } from "react"
-
+interface LSCloze {
+    cloze: string
+    translation: string
+}
 export default function Cloze() {
     const [_, setCloze] = useState("")
     
     const ref0 = useRef<HTMLTextAreaElement>(null)
     const ref1 = useRef<HTMLTextAreaElement>(null)
     const highlightBar = useRef<HTMLDivElement>(null)
-    useRecovery<string>("cloze", (data) => {
+    useRecovery<LSCloze>("cloze", (data) => {
         if(!ref0.current || !ref1.current){
             return
         }
-        ref0.current.value = data
-        ref1.current.value = data
+        ref0.current.value = data.cloze
+        ref1.current.value = data.translation
     })
     const getLineNumber: React.KeyboardEventHandler = function getLineNumber(event) {
         const target = event.target as HTMLTextAreaElement
@@ -37,6 +40,10 @@ export default function Cloze() {
     }
     const onBlur = () => {
         highlightBar.current!.style.top = "-999px"
+        localStorage.setItem("cloze", JSON.stringify({
+            cloze: ref0.current!.value,
+            translation: ref1.current!.value,
+        }))
     }
     return <div>
         <Button>写入数据库</Button>
