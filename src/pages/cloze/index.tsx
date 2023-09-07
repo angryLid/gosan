@@ -1,8 +1,19 @@
-import { FormEvent, useRef } from "react"
+import useRecovery from "@/hooks/useRecovery"
+import { FormEvent, useRef, useState } from "react"
 
 export default function Cloze() {
+    const [_, setCloze] = useState("")
+    
     const ref0 = useRef<HTMLTextAreaElement>(null)
     const ref1 = useRef<HTMLTextAreaElement>(null)
+
+    useRecovery<string>("cloze", (data) => {
+        if(!ref0.current || !ref1.current){
+            return
+        }
+        ref0.current.value = data
+        ref1.current.value = data
+    })
     const resize = (event: FormEvent) => {
         if(!ref0.current || !ref1.current){
             return
