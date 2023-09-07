@@ -23,4 +23,12 @@ model Course {
   id         Int          @id @default(autoincrement())
   name       String
   Vocabulary Vocabulary[]
+  Cloze Cloze[]
+}
+
+model Cloze {
+  id Int @id @default(autoincrement())
+  content String
+  origin Course @relation(fields: [courseId], references: [id])
+  courseId Int
 }

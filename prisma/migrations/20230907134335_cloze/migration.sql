@@ -1,0 +1,7 @@
+-- CreateTable
+CREATE TABLE "Cloze" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "content" TEXT NOT NULL,
+    "courseId" INTEGER NOT NULL,
+    CONSTRAINT "Cloze_courseId_fkey" FOREIGN KEY ("courseId") REFERENCES "Course" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+);
