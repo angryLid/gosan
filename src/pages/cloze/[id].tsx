@@ -27,6 +27,7 @@ export default function Cloze() {
   const getLineNumber: React.KeyboardEventHandler = function getLineNumber(
     event
   ) {
+    return;
     const target = event.target as HTMLTextAreaElement;
     const lineNumber = target.value
       .slice(0, target.selectionStart)
@@ -57,7 +58,7 @@ export default function Cloze() {
       <div className="flex items-center gap-x-2">
         <span className="font-bold grow">{data?.name}</span>
         <Button variant="outline" size="sm">
-          写入数据库
+          更新数据库
         </Button>
         <Button variant="outline" size="sm">
           导出为CSV

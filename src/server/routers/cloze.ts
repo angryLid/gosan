@@ -6,19 +6,22 @@ import { router, publicProcedure } from "../trpc";
 import { z } from "zod";
 import { prisma } from "@/server/prisma";
 
-export const postRouter = router({
-  list: publicProcedure
+export const clozeRouter = router({
+  save: publicProcedure
     .input(
       z.object({
-        limit: z.number().min(1).max(100).nullish(),
-        cursor: z.string().nullish(),
-      }),
+        id: z.number(),
+        content: z.array(z.string()),
+      })
     )
     .query(async ({ input }) => {
-      const items = await prisma.vocabulary.findFirst();
-
-      return {
-        items,
-      };
+      for (const c of input.content) {
+        prisma.cloze.create({
+          data: {
+            courseId: input.id,
+            content: c,
+          },
+        });
+      }
     }),
 });

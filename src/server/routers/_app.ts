@@ -3,13 +3,13 @@
  */
 import { publicProcedure, router } from "../trpc";
 import { courseRouter } from "./course";
-import { postRouter } from "./post";
+import { clozeRouter } from "./cloze";
 import { vocabularyRouter } from "./vocabulary";
 
 export const appRouter = router({
   healthcheck: publicProcedure.query(() => "yay!"),
 
-  post: postRouter,
+  cloze: clozeRouter,
   vocabulary: vocabularyRouter,
   course: courseRouter,
 });
