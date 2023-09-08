@@ -35,7 +35,7 @@ export default function Browse() {
             <span className="grow">{course.name}</span>
             <Link
               className="mr-4 text-sky-600 underline"
-              href={`/${course.id}`}
+              href={`/vocabulary/${course.id}`}
             >
               词汇
             </Link>

@@ -3,6 +3,7 @@ import useEnterKey from "@/hooks/useEnterKey";
 import { Button } from "@/components/button";
 import { trpc } from "@/utils/trpc-provider";
 import saveCSV from "@/utils/gen-csv";
+import { useRouter } from "next/router";
 interface Row {
   word: string;
   pronunciation: string;
@@ -10,6 +11,12 @@ interface Row {
 }
 
 export default function Home() {
+  const router = useRouter();
+
+  const id = +(router.query.id ?? 0);
+  const { data } = trpc.course.getById.useQuery({
+    id,
+  });
   const tableRef = useRef<HTMLTableElement>(null);
 
   const { wordTable, setWordTable } = useEnterKey(tableRef);
@@ -25,16 +32,18 @@ export default function Home() {
     }
   }, [setWordTable]);
   const courseInputRef = useRef<HTMLInputElement>(null);
-  const { mutate } = trpc.vocabulary.save.useMutation();
+  const { mutateAsync } = trpc.vocabulary.saveToExistedCourse.useMutation();
   const onClickSave = () => {
-    try {
-      mutate({
-        courseName: courseInputRef.current?.value ?? new Date().toString(),
-        list: wordTable,
+    mutateAsync({
+      courseId: id,
+      list: wordTable,
+    })
+      .then(() => {
+        alert("OK");
+      })
+      .catch(() => {
+        alert("Woops...");
       });
-    } catch {
-      alert("Woops...");
-    }
   };
   const onClickGen = () => {
     saveCSV(
@@ -63,6 +72,15 @@ export default function Home() {
         <Button onClick={onClickGen}>导出为CSV</Button>
         <input type="checkbox" name="skip" />
         <label htmlFor="skip">若已经添加则跳过</label>
+      </div>
+      <div className="flex items-center gap-x-2">
+        <span className="font-bold grow">{data?.name}</span>
+        <Button variant="outline" size="sm" onClick={onClickSave}>
+          更新数据库
+        </Button>
+        <Button variant="outline" size="sm">
+          导出为CSV
+        </Button>
       </div>
       <table className="w-1/2" ref={tableRef}>
         <thead>

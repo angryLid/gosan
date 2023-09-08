@@ -12,9 +12,9 @@ export const vocabularyRouter = router({
             word: z.string(),
             explaination: z.string(),
             pronunciation: z.string(),
-          }),
+          })
         ),
-      }),
+      })
     )
     .mutation(async ({ input }) => {
       const course = await prisma.course.create({
@@ -31,5 +31,30 @@ export const vocabularyRouter = router({
           },
         });
       }
+    }),
+  saveToExistedCourse: publicProcedure
+    .input(
+      z.object({
+        courseId: z.number(),
+        list: z.array(
+          z.object({
+            word: z.string(),
+            explaination: z.string(),
+            pronunciation: z.string(),
+          })
+        ),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const promises = input.list.map((w) =>
+        prisma.vocabulary.create({
+          data: {
+            ...w,
+            courseId: input.courseId,
+          },
+        })
+      );
+
+      await Promise.all(promises);
     }),
 });
