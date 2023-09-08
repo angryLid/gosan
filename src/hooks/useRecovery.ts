@@ -4,7 +4,7 @@ type Setter = Dispatch<SetStateAction<any>>;
 export default function useRecovery<T>(
   key: string,
   onOk: (data: T) => void,
-  onErr?: () => void,
+  onErr?: () => void
 ) {
   useEffect(() => {
     try {
