@@ -9,10 +9,16 @@ interface LSCloze {
 }
 export default function Cloze() {
   const router = useRouter();
-  const [_, setCloze] = useState("");
+
+  const id = +(router.query.id ?? 0);
   const { data } = trpc.course.getById.useQuery({
-    id: +(router.query.id ?? 0),
+    id,
   });
+  const { data: clozes } = trpc.cloze.getAllByCourse.useQuery({
+    id,
+  });
+  const { mutateAsync } = trpc.cloze.save.useMutation();
+
   const ref0 = useRef<HTMLTextAreaElement>(null);
   const ref1 = useRef<HTMLTextAreaElement>(null);
   const highlightBar = useRef<HTMLDivElement>(null);
@@ -53,11 +59,22 @@ export default function Cloze() {
       })
     );
   };
+  const updateDatabase = () => {
+    const a = ref0.current!.value.split("\n\n");
+    const b = ref1.current!.value.split("\n\n");
+    mutateAsync({
+      content: a.map((_, index) => JSON.stringify([a[index], b[index]])),
+      id,
+    }).then(() => {
+      ref0.current!.value = "";
+      ref1.current!.value = "";
+    });
+  };
   return (
     <div>
       <div className="flex items-center gap-x-2">
         <span className="font-bold grow">{data?.name}</span>
-        <Button variant="outline" size="sm">
+        <Button variant="outline" size="sm" onClick={updateDatabase}>
           更新数据库
         </Button>
         <Button variant="outline" size="sm">
@@ -89,6 +106,7 @@ export default function Cloze() {
           className="rounded-sm grow border outline-none focus:border-slate-600 resize-none p-2"
         />
       </div>
+      <div>{clozes?.map((c) => c.content)}</div>
     </div>
   );
 }

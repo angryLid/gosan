@@ -14,14 +14,28 @@ export const clozeRouter = router({
         content: z.array(z.string()),
       })
     )
-    .query(async ({ input }) => {
+    .mutation(async ({ input }) => {
+      const promises = [];
       for (const c of input.content) {
-        prisma.cloze.create({
-          data: {
-            courseId: input.id,
-            content: c,
-          },
-        });
+        promises.push(
+          prisma.cloze.create({
+            data: {
+              courseId: input.id,
+              content: c,
+            },
+          })
+        );
       }
+      await Promise.all(promises);
+    }),
+
+  getAllByCourse: publicProcedure
+    .input(z.object({ id: z.number() }))
+    .query(async ({ input }) => {
+      return prisma.cloze.findMany({
+        where: {
+          courseId: input.id,
+        },
+      });
     }),
 });
