@@ -2,10 +2,9 @@
  *
  * This is an example router, you can delete this file and then update `../pages/api/trpc/[trpc].tsx`
  */
-import { router, publicProcedure } from '../trpc';
-import { z } from 'zod';
-import { prisma } from '@/server/prisma';
-
+import { router, publicProcedure } from "../trpc";
+import { z } from "zod";
+import { prisma } from "@/server/prisma";
 
 export const postRouter = router({
   list: publicProcedure
@@ -16,12 +15,10 @@ export const postRouter = router({
       }),
     )
     .query(async ({ input }) => {
+      const items = await prisma.vocabulary.findFirst();
 
-      const items = await prisma.vocabulary.findFirst()
-      
       return {
         items,
-      }
+      };
     }),
-
 });

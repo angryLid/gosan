@@ -1,12 +1,9 @@
-import type { Config } from 'tailwindcss'
-import colors from "tailwindcss/colors"
-import { fontFamily } from "tailwindcss/defaultTheme"
+import type { Config } from "tailwindcss";
+import colors from "tailwindcss/colors";
+import { fontFamily } from "tailwindcss/defaultTheme";
 
 const config: Config = {
-  content: [
-    './src/**/*.{js,ts,jsx,tsx,mdx}',
-    
-  ],
+  content: ["./src/**/*.{js,ts,jsx,tsx,mdx}"],
   theme: {
     extend: {
       colors: {
@@ -69,5 +66,5 @@ const config: Config = {
     },
   },
   plugins: [],
-}
-export default config
+};
+export default config;

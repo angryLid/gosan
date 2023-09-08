@@ -1,10 +1,9 @@
 export type WithChildren = {
-    children?: React.ReactNode
-}
+  children?: React.ReactNode;
+};
 
 export interface Row {
-    word: string
-    pronunciation: string 
-    explaination: string
-  }
-  
+  word: string;
+  pronunciation: string;
+  explaination: string;
+}
