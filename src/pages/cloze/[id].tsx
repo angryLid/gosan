@@ -1,16 +1,22 @@
 import { Button } from "@/components/button";
 import useRecovery from "@/hooks/useRecovery";
+import { trpc } from "@/utils/trpc-provider";
+import { useRouter } from "next/router";
 import { FormEvent, useRef, useState } from "react";
 interface LSCloze {
   cloze: string;
   translation: string;
 }
 export default function Cloze() {
+  const router = useRouter();
   const [_, setCloze] = useState("");
-
+  const { data } = trpc.course.getById.useQuery({
+    id: +(router.query.id ?? 0),
+  });
   const ref0 = useRef<HTMLTextAreaElement>(null);
   const ref1 = useRef<HTMLTextAreaElement>(null);
   const highlightBar = useRef<HTMLDivElement>(null);
+
   useRecovery<LSCloze>("cloze", (data) => {
     if (!ref0.current || !ref1.current) {
       return;
@@ -19,7 +25,7 @@ export default function Cloze() {
     ref1.current.value = data.translation;
   });
   const getLineNumber: React.KeyboardEventHandler = function getLineNumber(
-    event,
+    event
   ) {
     const target = event.target as HTMLTextAreaElement;
     const lineNumber = target.value
@@ -29,14 +35,12 @@ export default function Cloze() {
     highlightBar.current!.style.left = `${target.dataset.left}px`;
     highlightBar.current!.style.width = "620px";
   };
-  const resize = (event: FormEvent) => {
-    if (!ref0.current || !ref1.current) {
-      return;
-    }
-    const height =
-      Math.max(ref0.current.scrollHeight, ref1.current.scrollHeight) + 2 + "px";
-    ref0.current.style.height = height;
-    ref1.current.style.height = height;
+  const resize = () => {
+    const height = `${
+      Math.max(ref0.current!.scrollHeight, ref1.current!.scrollHeight) + 2
+    }px`;
+    ref0.current!.style.height = height;
+    ref1.current!.style.height = height;
   };
   const onBlur = () => {
     highlightBar.current!.style.top = "-999px";
@@ -45,33 +49,43 @@ export default function Cloze() {
       JSON.stringify({
         cloze: ref0.current!.value,
         translation: ref1.current!.value,
-      }),
+      })
     );
   };
   return (
     <div>
-      <Button>写入数据库</Button>
-      <Button>导出为CSV</Button>
-      <div className="w-full p-4 box-border relative">
+      <div className="flex items-center gap-x-2">
+        <span className="font-bold grow">{data?.name}</span>
+        <Button variant="outline" size="sm">
+          写入数据库
+        </Button>
+        <Button variant="outline" size="sm">
+          导出为CSV
+        </Button>
+      </div>
+
+      <div className="mt-4 w-full box-border relative flex justify-between gap-x-4 ">
         <div
           ref={highlightBar}
-          className="w-5/12 absolute bg-violet-300 h-6 opacity-50 -top-96"
+          className="w-full absolute bg-violet-300 h-6 opacity-50 -top-96"
         ></div>
         <textarea
           ref={ref0}
           data-left="686"
+          onFocus={resize}
           onInput={resize}
           onBlur={onBlur}
           onKeyUp={getLineNumber}
-          className="w-5/12 mr-8 box-border  border outline-none focus:border-slate-600 resize-none p-2"
-        />
+          className="rounded-sm grow box-border  border outline-none focus:border-slate-600 resize-none p-2"
+        ></textarea>
         <textarea
           ref={ref1}
           data-left="26"
+          onFocus={resize}
           onInput={resize}
           onBlur={onBlur}
           onKeyUp={getLineNumber}
-          className="w-5/12  border outline-none focus:border-slate-600 resize-none p-2"
+          className="rounded-sm grow border outline-none focus:border-slate-600 resize-none p-2"
         />
       </div>
     </div>

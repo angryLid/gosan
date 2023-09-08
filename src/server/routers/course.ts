@@ -13,4 +13,13 @@ export const courseRouter = router({
         data: input,
       });
     }),
+  getById: publicProcedure
+    .input(z.object({ id: z.number() }))
+    .query(async ({ input }) => {
+      return prisma.course.findUnique({
+        where: {
+          id: input.id,
+        },
+      });
+    }),
 });
