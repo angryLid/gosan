@@ -20,6 +20,9 @@ export default function Home() {
   const tableRef = useRef<HTMLTableElement>(null);
 
   const { wordTable, setWordTable } = useEnterKey(tableRef);
+  const clear = () => {
+    setWordTable(() => [{ word: "", pronunciation: "", explaination: "" }]);
+  };
   useEffect(() => {
     try {
       const data = localStorage.getItem("table");
@@ -28,9 +31,9 @@ export default function Home() {
       }
       setWordTable(() => JSON.parse(data));
     } catch {
-      setWordTable(() => [{ word: "", pronunciation: "", explaination: "" }]);
+      clear();
     }
-  }, [setWordTable]);
+  }, []);
   const courseInputRef = useRef<HTMLInputElement>(null);
   const { mutateAsync } = trpc.vocabulary.saveToExistedCourse.useMutation();
   const onClickSave = () => {
@@ -57,6 +60,7 @@ export default function Home() {
         ])
     );
   };
+
   return (
     <>
       <div className="options">
@@ -75,6 +79,9 @@ export default function Home() {
       </div>
       <div className="flex items-center gap-x-2">
         <span className="font-bold grow">{data?.name}</span>
+        <Button variant="outline" size="sm" onClick={clear}>
+          清空
+        </Button>
         <Button variant="outline" size="sm" onClick={onClickSave}>
           更新数据库
         </Button>
