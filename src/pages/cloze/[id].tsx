@@ -2,7 +2,7 @@ import { Button } from "@/components/button";
 import useRecovery from "@/hooks/useRecovery";
 import { trpc } from "@/utils/trpc-provider";
 import { useRouter } from "next/router";
-import { FormEvent, useRef, useState } from "react";
+import { FormEvent, useMemo, useRef, useState } from "react";
 interface LSCloze {
   cloze: string;
   translation: string;
@@ -14,9 +14,25 @@ export default function Cloze() {
   const { data } = trpc.course.getById.useQuery({
     id,
   });
-  const { data: clozes } = trpc.cloze.getAllByCourse.useQuery({
-    id,
-  });
+  const { data: clozes, refetch: refreshClozes } =
+    trpc.cloze.getAllByCourse.useQuery({
+      id,
+    });
+
+  const clozesView = useMemo(() => {
+    const r: string[] = [];
+    clozes?.forEach((piece) => {
+      const [zh, ja] = JSON.parse(piece.content) as [string, string];
+      const _ja = ja.split("\n");
+      zh.split("\n")
+        .map((ele, index) => `(${ele}) ${_ja[index]}`)
+        .forEach((ele) => {
+          r.push(ele);
+        });
+      r.push("");
+    });
+    return r;
+  }, [clozes]);
   const { mutateAsync } = trpc.cloze.save.useMutation();
 
   const ref0 = useRef<HTMLTextAreaElement>(null);
@@ -65,10 +81,14 @@ export default function Cloze() {
     mutateAsync({
       content: a.map((_, index) => JSON.stringify([a[index], b[index]])),
       id,
-    }).then(() => {
-      ref0.current!.value = "";
-      ref1.current!.value = "";
-    });
+    })
+      .then(() => {
+        ref0.current!.value = "";
+        ref1.current!.value = "";
+      })
+      .finally(() => {
+        refreshClozes();
+      });
   };
   return (
     <div>
@@ -106,7 +126,11 @@ export default function Cloze() {
           className="rounded-sm grow border outline-none focus:border-slate-600 resize-none p-2"
         />
       </div>
-      <div>{clozes?.map((c) => c.content)}</div>
+      <div>
+        {clozesView.map((row, index) => (
+          <div key={index}>{row ? row : <br />}</div>
+        ))}
+      </div>
     </div>
   );
 }
